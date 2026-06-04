@@ -151,11 +151,14 @@ def dashboard_page(master_password: str):
             st.error("Topic is required")
             st.stop()
 
-        ideas = harness.generate_ideas(topic=topic, count=10)
-        batch_id = save_ideas(topic=topic, ideas=ideas)
-        st.session_state.last_batch_id = batch_id
-        st.success(f"Generated ideas. Batch: {batch_id}")
-        st.rerun()
+        try:
+            ideas = harness.generate_ideas(topic=topic, count=10)
+            batch_id = save_ideas(topic=topic, ideas=ideas)
+            st.session_state.last_batch_id = batch_id
+            st.success(f"Generated ideas. Batch: {batch_id}")
+            st.rerun()
+        except Exception as e:
+            st.error(f"Failed to generate ideas: {e}")
 
     batch_id = st.session_state.last_batch_id or get_latest_batch_id()
 
@@ -194,30 +197,33 @@ def dashboard_page(master_password: str):
             st.stop()
 
         prompt_style = style
-        generated = harness.generate_videos(
-            ideas=selected_ideas,
-            duration_seconds=duration,
-            style=prompt_style,
-        )
-
-        # Save video records
-        for item in generated:
-            file_path = ""  # Veo download not implemented in this build
-            prompt = item["prompt"]
-            video_id = save_video(
-                idea_id=item["idea_id"],
-                file_path=file_path,
-                file_name="",
-                duration=duration,
-                prompt=prompt,
-                veo_job_id=item["veo_job_id"],
-                status="submitted",
-                metadata={"topic": topic, "batch_id": batch_id},
+        try:
+            generated = harness.generate_videos(
+                ideas=selected_ideas,
+                duration_seconds=duration,
+                style=prompt_style,
             )
-            update_video_status(video_id, "completed")
 
-        st.success("Video records created (Veo download/polling may require API wiring).")
-        st.rerun()
+            # Save video records
+            for item in generated:
+                file_path = ""  # Veo download not implemented in this build
+                prompt = item["prompt"]
+                video_id = save_video(
+                    idea_id=item["idea_id"],
+                    file_path=file_path,
+                    file_name="",
+                    duration=duration,
+                    prompt=prompt,
+                    veo_job_id=item["veo_job_id"],
+                    status="submitted",
+                    metadata={"topic": topic, "batch_id": batch_id},
+                )
+                update_video_status(video_id, "completed")
+
+            st.success("Video records created (Veo download/polling may require API wiring).")
+            st.rerun()
+        except Exception as e:
+            st.error(f"Failed to generate videos: {e}")
 
     videos = get_all_videos()
     if videos:
