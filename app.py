@@ -209,6 +209,28 @@ def dashboard_page(master_password: str):
     selected_ideas = get_selected_ideas(batch_id)
 
     st.subheader("🎬 Video Queue")
+
+    user = get_user()
+    default_provider = user.get("video_provider", "mock") or "mock"
+    provider_options = ["mock", "google_veo", "fal_ai", "json2video"]
+    if default_provider not in provider_options:
+        default_provider = "mock"
+
+    provider_labels = {
+        "mock": "Mock Generator (100% Free / Testing)",
+        "google_veo": "Google Veo (Paid)",
+        "fal_ai": "Fal.ai - HunyuanVideo/Wan2.1 (Freemium)",
+        "json2video": "JSON2Video (Freemium)"
+    }
+
+    selected_provider = st.radio(
+        "Choose Video Generation Engine:",
+        provider_options,
+        index=provider_options.index(default_provider),
+        format_func=lambda x: provider_labels[x],
+        help="Select which engine you want to use to generate the video."
+    )
+
     if st.button("Generate Videos for Selected Ideas"):
         if not selected_ideas:
             st.error("Select at least 1 idea.")
@@ -220,6 +242,7 @@ def dashboard_page(master_password: str):
                 ideas=selected_ideas,
                 duration_seconds=duration,
                 style=prompt_style,
+                video_provider=selected_provider,
             )
 
             # Save video records
@@ -234,7 +257,7 @@ def dashboard_page(master_password: str):
                     prompt=prompt,
                     veo_job_id=item["veo_job_id"],
                     status="submitted",
-                    metadata={"topic": topic, "batch_id": batch_id},
+                    metadata={"topic": topic, "batch_id": batch_id, "video_provider": selected_provider},
                 )
                 update_video_status(video_id, "completed", file_path=file_path)
 
@@ -247,7 +270,17 @@ def dashboard_page(master_password: str):
     if videos:
         for v in videos[:15]:
             with st.container():
-                st.write(f"**Video #{v['id']}** | Status: `{v['status']}` | Job ID: `{v.get('veo_job_id','')}`")
+                provider_str = ""
+                if v.get('metadata'):
+                    try:
+                        meta = json.loads(v['metadata'])
+                        prov = meta.get('video_provider')
+                        if prov:
+                            prov_label = provider_labels.get(prov, prov)
+                            provider_str = f" | Engine: **{prov_label}**"
+                    except Exception:
+                        pass
+                st.write(f"**Video #{v['id']}** | Status: `{v['status']}` | Job ID: `{v.get('veo_job_id','')}`{provider_str}")
                 fp = v.get('file_path', '')
                 if fp:
                     abs_path = Path(__file__).parent / fp
@@ -263,9 +296,27 @@ def dashboard_page(master_password: str):
 def history_page():
     st.header("📚 History")
     videos = get_all_videos()
+
+    provider_labels = {
+        "mock": "Mock Generator (100% Free / Testing)",
+        "google_veo": "Google Veo (Paid)",
+        "fal_ai": "Fal.ai - HunyuanVideo/Wan2.1 (Freemium)",
+        "json2video": "JSON2Video (Freemium)"
+    }
+
     for v in videos[:30]:
         with st.container():
-            st.write(f"**Video #{v['id']}** | Status: `{v['status']}`")
+            provider_str = ""
+            if v.get('metadata'):
+                try:
+                    meta = json.loads(v['metadata'])
+                    prov = meta.get('video_provider')
+                    if prov:
+                        prov_label = provider_labels.get(prov, prov)
+                        provider_str = f" | Engine: **{prov_label}**"
+                except Exception:
+                    pass
+            st.write(f"**Video #{v['id']}** | Status: `{v['status']}`{provider_str}")
             st.write(f"Prompt: {v.get('prompt_used','')}")
             fp = v.get('file_path', '')
             if fp:

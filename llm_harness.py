@@ -129,7 +129,7 @@ class Harness:
         cta = data.get("cta", "").strip()
         return caption, hashtags, cta
 
-    def generate_videos(self, ideas: List[dict], duration_seconds: int, style: str = "") -> List[dict]:
+    def generate_videos(self, ideas: List[dict], duration_seconds: int, style: str = "", video_provider: str = None) -> List[dict]:
         """Generate videos sequentially.
 
         Returns a list of dicts:
@@ -138,8 +138,9 @@ class Harness:
 
         import time
 
-        user = get_user()
-        video_provider = user.get("video_provider", "mock") or "mock"
+        if not video_provider:
+            user = get_user()
+            video_provider = user.get("video_provider", "mock") or "mock"
 
         # Initialize the selected client
         client = None
