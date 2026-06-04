@@ -33,12 +33,9 @@ from security import get_api_key
 logger = logging.getLogger(__name__)
 
 FREE_STOCK_VIDEOS = [
-    "https://assets.mixkit.co/videos/preview/mixkit-medical-icons-animated-on-a-blue-background-41979-large.mp4",
-    "https://assets.mixkit.co/videos/preview/mixkit-heart-rate-monitor-in-a-hospital-room-41981-large.mp4",
-    "https://assets.mixkit.co/videos/preview/mixkit-doctor-explaining-something-to-a-patient-41984-large.mp4",
-    "https://assets.mixkit.co/videos/preview/mixkit-doctor-writing-on-a-clipboard-41985-large.mp4",
-    "https://assets.mixkit.co/videos/preview/mixkit-red-blood-cells-under-a-microscope-41995-large.mp4",
-    "https://assets.mixkit.co/videos/preview/mixkit-stethoscope-on-a-medical-form-42001-large.mp4"
+    "https://vjs.zencdn.net/v/oceans.mp4",
+    "https://www.w3schools.com/html/mov_bbb.mp4",
+    "https://www.w3schools.com/html/movie.mp4"
 ]
 
 
