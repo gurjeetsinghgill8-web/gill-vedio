@@ -110,6 +110,23 @@ def settings_page(master_password: str):
     with st.expander("🔑 API Keys"):
         st.caption("Add keys for: google_veo, fal_ai, json2video, groq, gemini, nvidia")
 
+        # Display configured keys for diagnostic verification
+        from security import get_all_api_keys
+        st.markdown("##### Configured Keys (Diagnostic Check):")
+        all_keys = get_all_api_keys(master_password)
+        if all_keys:
+            for prov, data in all_keys.items():
+                k = data.get("key", "")
+                if k:
+                    masked = k[:4] + "..." + k[-4:] if len(k) > 8 else "..."
+                    st.success(f"✔️ **{prov}**: `{masked}` (Tier: {data.get('tier', 'free')})")
+                else:
+                    st.warning(f"❌ **{prov}**: No key configured.")
+        else:
+            st.info("No API keys saved in the vault yet.")
+
+        st.divider()
+
         providers = ["google_veo", "fal_ai", "json2video", "groq", "gemini", "nvidia"]
         for provider in providers:
             with st.container():
@@ -278,6 +295,19 @@ def dashboard_page(master_password: str):
         except Exception as e:
             import traceback
             st.error(f"Failed to generate videos: {e}")
+
+            # Diagnostic check of keys used
+            st.markdown("### 🔑 Diagnostic Key Check:")
+            try:
+                fal_key = harness.get_masked_key("fal_ai")
+                veo_key = harness.get_masked_key("google_veo")
+                gemini_key = harness.get_masked_key("gemini")
+                st.write(f"- **Fal.ai Key:** `{fal_key}`")
+                st.write(f"- **Google Veo Key:** `{veo_key}`")
+                st.write(f"- **Gemini Key (Veo Fallback):** `{gemini_key}`")
+            except Exception as diag_err:
+                st.write(f"Could not retrieve key info: {diag_err}")
+
             st.code(traceback.format_exc())
 
     videos = get_all_videos()

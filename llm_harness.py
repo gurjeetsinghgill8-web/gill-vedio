@@ -79,6 +79,13 @@ class Harness:
             )
         return JSON2VideoClient(api_key=key_data["key"])
 
+    def get_masked_key(self, provider: str) -> str:
+        key_data = get_api_key(self.master_password, provider)
+        if not key_data or not key_data.get("key"):
+            return "None/Not Set"
+        k = key_data["key"]
+        return k[:4] + "..." + k[-4:] if len(k) > 8 else "..."
+
     def get_user_profile_context(self) -> str:
         user = get_user()
         if not user:
