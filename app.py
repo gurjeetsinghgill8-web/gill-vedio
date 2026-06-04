@@ -152,6 +152,19 @@ def settings_page(master_password: str):
             st.success("Preferences saved.")
 
 
+def save_dashboard_provider():
+    prov = st.session_state.get("dashboard_video_provider")
+    if prov:
+        update_preferences(video_provider=prov)
+        provider_labels = {
+            "mock": "Mock Generator (100% Free / Testing)",
+            "google_veo": "Google Veo (Paid)",
+            "fal_ai": "Fal.ai - HunyuanVideo/Wan2.1 (Freemium)",
+            "json2video": "JSON2Video (Freemium)"
+        }
+        st.toast(f"✅ Video Engine switched to: {provider_labels.get(prov, prov)}")
+
+
 def dashboard_page(master_password: str):
     st.header("🎯 Dashboard")
 
@@ -228,6 +241,8 @@ def dashboard_page(master_password: str):
         provider_options,
         index=provider_options.index(default_provider),
         format_func=lambda x: provider_labels[x],
+        key="dashboard_video_provider",
+        on_change=save_dashboard_provider,
         help="Select which engine you want to use to generate the video."
     )
 
