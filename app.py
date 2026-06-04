@@ -276,7 +276,9 @@ def dashboard_page(master_password: str):
             st.success("Video records created.")
             st.rerun()
         except Exception as e:
+            import traceback
             st.error(f"Failed to generate videos: {e}")
+            st.code(traceback.format_exc())
 
     videos = get_all_videos()
     if videos:
