@@ -51,6 +51,11 @@ def save_api_provider_key(master_password: str, provider: str, api_key: str, tie
     save_api_key(master_password=master_password, provider=provider, api_key=api_key, tier=tier)
 
 
-def update_preferences(video_length: Optional[int] = None, model: Optional[str] = None, tier: Optional[str] = None):
-    update_user_preferences(video_length=video_length, model=model, tier=tier)
+def update_preferences(
+    video_length: Optional[int] = None,
+    model: Optional[str] = None,
+    tier: Optional[str] = None,
+    video_provider: Optional[str] = None,
+):
+    update_user_preferences(video_length=video_length, model=model, tier=tier, video_provider=video_provider)
 

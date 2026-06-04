@@ -108,9 +108,9 @@ def settings_page(master_password: str):
             st.success("Profile saved.")
 
     with st.expander("🔑 API Keys"):
-        st.caption("Add keys for: google_veo, groq, gemini, nvidia")
+        st.caption("Add keys for: google_veo, fal_ai, json2video, groq, gemini, nvidia")
 
-        providers = ["google_veo", "groq", "gemini", "nvidia"]
+        providers = ["google_veo", "fal_ai", "json2video", "groq", "gemini", "nvidia"]
         for provider in providers:
             with st.container():
                 key = st.text_input(f"{provider} API key", type="password", key=f"key_{provider}")
@@ -129,8 +129,26 @@ def settings_page(master_password: str):
         video_length = st.number_input("Default video length (seconds)", min_value=5, max_value=60, value=int(user.get("default_video_length", 10)))
         model = st.text_input("Default LLM model id (optional)", value=user.get("default_model", "groq"))
         tier = st.selectbox("Default tier", ["free", "paid"], index=0)
+        
+        provider_options = ["mock", "google_veo", "fal_ai", "json2video"]
+        current_provider = user.get("video_provider", "mock")
+        if current_provider not in provider_options:
+            current_provider = "mock"
+            
+        video_provider = st.selectbox(
+            "Video Generation Provider",
+            provider_options,
+            index=provider_options.index(current_provider),
+            format_func=lambda x: {
+                "mock": "Mock Generator (100% Free / Testing)",
+                "google_veo": "Google Veo (Paid)",
+                "fal_ai": "Fal.ai - HunyuanVideo/Wan2.1 (Freemium)",
+                "json2video": "JSON2Video (Freemium)"
+            }[x]
+        )
+        
         if st.button("Save Preferences"):
-            update_preferences(video_length=int(video_length), model=model, tier=tier)
+            update_preferences(video_length=int(video_length), model=model, tier=tier, video_provider=video_provider)
             st.success("Preferences saved.")
 
 

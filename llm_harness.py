@@ -26,6 +26,8 @@ from models.llm_router import LLMRouter
 
 # Veo is optional for development/testing; if no veo key exists we surface a clear error.
 from models.veo_client import VeoClient
+from models.fal_client import FalClient
+from models.json2video_client import JSON2VideoClient
 from security import get_api_key
 
 logger = logging.getLogger(__name__)
@@ -47,11 +49,29 @@ class Harness:
         self.master_password = master_password
         self.router = LLMRouter(master_password)
 
-    def _get_veo_client(self) -> Optional[VeoClient]:
+    def _get_veo_client(self) -> VeoClient:
         veo_key_data = get_api_key(self.master_password, "google_veo")
         if not veo_key_data:
-            return None
+            raise RuntimeError(
+                "Google Veo key not configured. Add provider 'google_veo' in Settings."
+            )
         return VeoClient(api_key=veo_key_data["key"])
+
+    def _get_fal_client(self) -> FalClient:
+        key_data = get_api_key(self.master_password, "fal_ai")
+        if not key_data:
+            raise RuntimeError(
+                "Fal.ai key not configured. Add provider 'fal_ai' in Settings."
+            )
+        return FalClient(api_key=key_data["key"])
+
+    def _get_json2video_client(self) -> JSON2VideoClient:
+        key_data = get_api_key(self.master_password, "json2video")
+        if not key_data:
+            raise RuntimeError(
+                "JSON2Video key not configured. Add provider 'json2video' in Settings."
+            )
+        return JSON2VideoClient(api_key=key_data["key"])
 
     def get_user_profile_context(self) -> str:
         user = get_user()
@@ -111,15 +131,25 @@ class Harness:
 
         import time
 
-        veo = self._get_veo_client()
+        user = get_user()
+        video_provider = user.get("video_provider", "mock") or "mock"
+
+        # Initialize the selected client
+        client = None
+        if video_provider == "google_veo":
+            client = self._get_veo_client()
+        elif video_provider == "fal_ai":
+            client = self._get_fal_client()
+        elif video_provider == "json2video":
+            client = self._get_json2video_client()
 
         outputs = []
         for i, idea in enumerate(ideas, start=1):
             idea_id = idea.get("id")
             prompt = self.generate_video_prompt(idea=idea, duration_seconds=duration_seconds, style=style)
 
-            if veo is not None:
-                job = veo.generate_video(prompt=prompt, duration_seconds=duration_seconds)
+            if client is not None:
+                job = client.generate_video(prompt=prompt, duration_seconds=duration_seconds)
                 job_id = job.job_id
             else:
                 job_id = f"mock_job_{int(time.time())}_{idea_id}"

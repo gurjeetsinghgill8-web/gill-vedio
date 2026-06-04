@@ -46,6 +46,7 @@ def initialize_database():
             default_video_length INTEGER DEFAULT 10,
             default_model TEXT DEFAULT 'groq',
             default_tier TEXT DEFAULT 'free',
+            video_provider TEXT DEFAULT 'mock',
             created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
             updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
         );
@@ -121,6 +122,15 @@ def initialize_database():
     """)
 
     conn.commit()
+
+    # Database migration: safely add video_provider column if table already exists
+    try:
+        cursor.execute("ALTER TABLE users ADD COLUMN video_provider TEXT DEFAULT 'mock'")
+        conn.commit()
+    except sqlite3.OperationalError:
+        # column already exists, ignore error
+        pass
+
     conn.close()
     logger.info("Database initialized successfully.")
 
@@ -168,7 +178,7 @@ def get_user() -> dict:
     return {}
 
 
-def update_user_preferences(video_length: int = None, model: str = None, tier: str = None):
+def update_user_preferences(video_length: int = None, model: str = None, tier: str = None, video_provider: str = None):
     """Update user preferences."""
     conn = get_connection()
     cursor = conn.cursor()
@@ -183,6 +193,9 @@ def update_user_preferences(video_length: int = None, model: str = None, tier: s
     if tier is not None:
         updates.append("default_tier=?")
         params.append(tier)
+    if video_provider is not None:
+        updates.append("video_provider=?")
+        params.append(video_provider)
     if updates:
         updates.append("updated_at=CURRENT_TIMESTAMP")
         cursor.execute(f"UPDATE users SET {', '.join(updates)}", params)
