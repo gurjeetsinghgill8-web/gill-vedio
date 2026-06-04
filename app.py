@@ -130,17 +130,16 @@ def settings_page(master_password: str):
         model = st.text_input("Default LLM model id (optional)", value=user.get("default_model", "groq"))
         tier = st.selectbox("Default tier", ["free", "paid"], index=0)
         
-        provider_options = ["mock", "google_veo", "fal_ai", "json2video"]
-        current_provider = user.get("video_provider", "mock")
+        provider_options = ["google_veo", "fal_ai", "json2video"]
+        current_provider = user.get("video_provider", "google_veo")
         if current_provider not in provider_options:
-            current_provider = "mock"
+            current_provider = "google_veo"
             
         video_provider = st.selectbox(
             "Video Generation Provider",
             provider_options,
             index=provider_options.index(current_provider),
             format_func=lambda x: {
-                "mock": "Mock Generator (100% Free / Testing)",
                 "google_veo": "Google Veo (Paid)",
                 "fal_ai": "Fal.ai - HunyuanVideo/Wan2.1 (Freemium)",
                 "json2video": "JSON2Video (Freemium)"
@@ -157,7 +156,6 @@ def save_dashboard_provider():
     if prov:
         update_preferences(video_provider=prov)
         provider_labels = {
-            "mock": "Mock Generator (100% Free / Testing)",
             "google_veo": "Google Veo (Paid)",
             "fal_ai": "Fal.ai - HunyuanVideo/Wan2.1 (Freemium)",
             "json2video": "JSON2Video (Freemium)"
@@ -224,13 +222,12 @@ def dashboard_page(master_password: str):
     st.subheader("🎬 Video Queue")
 
     user = get_user()
-    default_provider = user.get("video_provider", "mock") or "mock"
-    provider_options = ["mock", "google_veo", "fal_ai", "json2video"]
+    default_provider = user.get("video_provider", "google_veo") or "google_veo"
+    provider_options = ["google_veo", "fal_ai", "json2video"]
     if default_provider not in provider_options:
-        default_provider = "mock"
+        default_provider = "google_veo"
 
     provider_labels = {
-        "mock": "Mock Generator (100% Free / Testing)",
         "google_veo": "Google Veo (Paid)",
         "fal_ai": "Fal.ai - HunyuanVideo/Wan2.1 (Freemium)",
         "json2video": "JSON2Video (Freemium)"
@@ -313,7 +310,6 @@ def history_page():
     videos = get_all_videos()
 
     provider_labels = {
-        "mock": "Mock Generator (100% Free / Testing)",
         "google_veo": "Google Veo (Paid)",
         "fal_ai": "Fal.ai - HunyuanVideo/Wan2.1 (Freemium)",
         "json2video": "JSON2Video (Freemium)"

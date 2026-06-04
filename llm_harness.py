@@ -32,11 +32,7 @@ from security import get_api_key
 
 logger = logging.getLogger(__name__)
 
-FREE_STOCK_VIDEOS = [
-    "https://vjs.zencdn.net/v/oceans.mp4",
-    "https://www.w3schools.com/html/mov_bbb.mp4",
-    "https://www.w3schools.com/html/movie.mp4"
-]
+
 
 
 
@@ -136,11 +132,9 @@ class Harness:
         {idea_id, prompt, veo_job_id, file_path, status}
         """
 
-        import time
-
         if not video_provider:
             user = get_user()
-            video_provider = user.get("video_provider", "mock") or "mock"
+            video_provider = user.get("video_provider", "google_veo") or "google_veo"
 
         # Initialize the selected client
         client = None
@@ -151,42 +145,17 @@ class Harness:
         elif video_provider == "json2video":
             client = self._get_json2video_client()
 
+        if client is None:
+            raise ValueError(f"Unknown or unsupported video provider: {video_provider}")
+
         outputs = []
         for i, idea in enumerate(ideas, start=1):
             idea_id = idea.get("id")
             prompt = self.generate_video_prompt(idea=idea, duration_seconds=duration_seconds, style=style)
 
-            if client is not None:
-                job = client.generate_video(prompt=prompt, duration_seconds=duration_seconds)
-                job_id = job.job_id
-                file_path = ""
-            else:
-                job_id = f"mock_job_{int(time.time())}_{idea_id}"
-                
-                # Download a free stock video to test player functionality
-                from pathlib import Path
-                import requests
-                
-                video_url = FREE_STOCK_VIDEOS[idea_id % len(FREE_STOCK_VIDEOS)]
-                try:
-                    output_dir = Path(__file__).parent / "output"
-                    output_dir.mkdir(parents=True, exist_ok=True)
-                    local_path = output_dir / f"video_idea_{idea_id}.mp4"
-                    
-                    logger.info(f"Downloading free stock video: {video_url}")
-                    r = requests.get(video_url, stream=True, timeout=30)
-                    if r.status_code == 200:
-                        with open(local_path, 'wb') as f:
-                            for chunk in r.iter_content(chunk_size=1024*1024):
-                                if chunk:
-                                    f.write(chunk)
-                        file_path = f"output/video_idea_{idea_id}.mp4"
-                        logger.info(f"Successfully downloaded stock video to {file_path}")
-                    else:
-                        file_path = ""
-                except Exception as ex:
-                    logger.error(f"Failed to download mock video: {ex}")
-                    file_path = ""
+            job = client.generate_video(prompt=prompt, duration_seconds=duration_seconds)
+            job_id = job.job_id
+            file_path = ""
 
             # In a real pipeline we would download output and save local file.
             # For now we persist metadata and mark as completed when polling succeeds.
