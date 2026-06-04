@@ -224,36 +224,57 @@ def dashboard_page(master_password: str):
 
             # Save video records
             for item in generated:
-                file_path = ""  # Veo download not implemented in this build
+                file_path = item.get("file_path", "")
                 prompt = item["prompt"]
                 video_id = save_video(
                     idea_id=item["idea_id"],
                     file_path=file_path,
-                    file_name="",
+                    file_name=Path(file_path).name if file_path else "",
                     duration=duration,
                     prompt=prompt,
                     veo_job_id=item["veo_job_id"],
                     status="submitted",
                     metadata={"topic": topic, "batch_id": batch_id},
                 )
-                update_video_status(video_id, "completed")
+                update_video_status(video_id, "completed", file_path=file_path)
 
-            st.success("Video records created (Veo download/polling may require API wiring).")
+            st.success("Video records created.")
             st.rerun()
         except Exception as e:
             st.error(f"Failed to generate videos: {e}")
 
     videos = get_all_videos()
     if videos:
-        for v in videos[:30]:
-            st.write(f"Video #{v['id']} | idea_id={v['idea_id']} | status={v['status']} | veo_job_id={v.get('veo_job_id','')}")
+        for v in videos[:15]:
+            with st.container():
+                st.write(f"**Video #{v['id']}** | Status: `{v['status']}` | Job ID: `{v.get('veo_job_id','')}`")
+                fp = v.get('file_path', '')
+                if fp:
+                    abs_path = Path(__file__).parent / fp
+                    if abs_path.exists():
+                        st.video(str(abs_path))
+                    else:
+                        st.caption(f"📁 Video file: `{fp}` (might be ephemeral)")
+                else:
+                    st.caption("⏳ No video file generated yet.")
+                st.divider()
 
 
 def history_page():
     st.header("📚 History")
     videos = get_all_videos()
-    for v in videos[:50]:
-        st.write(f"Video {v['id']} - status={v['status']} - file_path={v.get('file_path','')}")
+    for v in videos[:30]:
+        with st.container():
+            st.write(f"**Video #{v['id']}** | Status: `{v['status']}`")
+            st.write(f"Prompt: {v.get('prompt_used','')}")
+            fp = v.get('file_path', '')
+            if fp:
+                abs_path = Path(__file__).parent / fp
+                if abs_path.exists():
+                    st.video(str(abs_path))
+                else:
+                    st.caption(f"📁 Video file: `{fp}`")
+            st.divider()
 
 
 def analytics_page():

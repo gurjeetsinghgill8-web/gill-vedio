@@ -32,6 +32,16 @@ from security import get_api_key
 
 logger = logging.getLogger(__name__)
 
+FREE_STOCK_VIDEOS = [
+    "https://assets.mixkit.co/videos/preview/mixkit-medical-icons-animated-on-a-blue-background-41979-large.mp4",
+    "https://assets.mixkit.co/videos/preview/mixkit-heart-rate-monitor-in-a-hospital-room-41981-large.mp4",
+    "https://assets.mixkit.co/videos/preview/mixkit-doctor-explaining-something-to-a-patient-41984-large.mp4",
+    "https://assets.mixkit.co/videos/preview/mixkit-doctor-writing-on-a-clipboard-41985-large.mp4",
+    "https://assets.mixkit.co/videos/preview/mixkit-red-blood-cells-under-a-microscope-41995-large.mp4",
+    "https://assets.mixkit.co/videos/preview/mixkit-stethoscope-on-a-medical-form-42001-large.mp4"
+]
+
+
 
 class Guardrails:
     @staticmethod
@@ -151,8 +161,34 @@ class Harness:
             if client is not None:
                 job = client.generate_video(prompt=prompt, duration_seconds=duration_seconds)
                 job_id = job.job_id
+                file_path = ""
             else:
                 job_id = f"mock_job_{int(time.time())}_{idea_id}"
+                
+                # Download a free stock video to test player functionality
+                from pathlib import Path
+                import requests
+                
+                video_url = FREE_STOCK_VIDEOS[idea_id % len(FREE_STOCK_VIDEOS)]
+                try:
+                    output_dir = Path(__file__).parent / "output"
+                    output_dir.mkdir(parents=True, exist_ok=True)
+                    local_path = output_dir / f"video_idea_{idea_id}.mp4"
+                    
+                    logger.info(f"Downloading free stock video: {video_url}")
+                    r = requests.get(video_url, stream=True, timeout=30)
+                    if r.status_code == 200:
+                        with open(local_path, 'wb') as f:
+                            for chunk in r.iter_content(chunk_size=1024*1024):
+                                if chunk:
+                                    f.write(chunk)
+                        file_path = f"output/video_idea_{idea_id}.mp4"
+                        logger.info(f"Successfully downloaded stock video to {file_path}")
+                    else:
+                        file_path = ""
+                except Exception as ex:
+                    logger.error(f"Failed to download mock video: {ex}")
+                    file_path = ""
 
             # In a real pipeline we would download output and save local file.
             # For now we persist metadata and mark as completed when polling succeeds.
@@ -163,7 +199,7 @@ class Harness:
                     "prompt": prompt,
                     "veo_job_id": job_id,
                     "status": "submitted",
-                    "file_path": "",
+                    "file_path": file_path,
                 }
             )
 
