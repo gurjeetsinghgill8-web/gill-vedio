@@ -55,8 +55,11 @@ class Harness:
     def _get_veo_client(self) -> VeoClient:
         veo_key_data = get_api_key(self.master_password, "google_veo")
         if not veo_key_data:
+            # Fallback to gemini key if google_veo is not configured
+            veo_key_data = get_api_key(self.master_password, "gemini")
+        if not veo_key_data:
             raise RuntimeError(
-                "Google Veo key not configured. Add provider 'google_veo' in Settings."
+                "Google Veo key not configured. Add provider 'google_veo' or 'gemini' in Settings."
             )
         return VeoClient(api_key=veo_key_data["key"])
 
