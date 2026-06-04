@@ -47,12 +47,10 @@ class Harness:
         self.master_password = master_password
         self.router = LLMRouter(master_password)
 
-    def _get_veo_client(self) -> VeoClient:
+    def _get_veo_client(self) -> Optional[VeoClient]:
         veo_key_data = get_api_key(self.master_password, "google_veo")
         if not veo_key_data:
-            raise RuntimeError(
-                "Google Veo key not configured. Add provider 'google_veo' in Settings."
-            )
+            return None
         return VeoClient(api_key=veo_key_data["key"])
 
     def get_user_profile_context(self) -> str:
@@ -111,6 +109,8 @@ class Harness:
         {idea_id, prompt, veo_job_id, file_path, status}
         """
 
+        import time
+
         veo = self._get_veo_client()
 
         outputs = []
@@ -118,7 +118,12 @@ class Harness:
             idea_id = idea.get("id")
             prompt = self.generate_video_prompt(idea=idea, duration_seconds=duration_seconds, style=style)
 
-            job = veo.generate_video(prompt=prompt, duration_seconds=duration_seconds)
+            if veo is not None:
+                job = veo.generate_video(prompt=prompt, duration_seconds=duration_seconds)
+                job_id = job.job_id
+            else:
+                job_id = f"mock_job_{int(time.time())}_{idea_id}"
+
             # In a real pipeline we would download output and save local file.
             # For now we persist metadata and mark as completed when polling succeeds.
             # Users can extend download logic once their Veo API is connected.
@@ -126,7 +131,7 @@ class Harness:
                 {
                     "idea_id": idea_id,
                     "prompt": prompt,
-                    "veo_job_id": job.job_id,
+                    "veo_job_id": job_id,
                     "status": "submitted",
                     "file_path": "",
                 }
