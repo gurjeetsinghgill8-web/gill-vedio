@@ -1,0 +1,17 @@
+GILL VEDIO - Build EXE instructions (Windows)
+
+Goal: create a single EXE so a non-technical person can install/run it.
+
+This repository currently runs via Streamlit. Building EXE requires packaging tools.
+
+Next steps:
+1) Install PyInstaller in your environment:
+   python -m pip install pyinstaller
+
+2) Build EXE:
+   python -m PyInstaller --onefile --name "GILL_VEDIO" --add-data "templates;templates" app.py
+
+NOTE:
+- Streamlit packaging is sometimes tricky; if the build fails, the best fallback is Option B (ZIP folder + run_app.bat).
+- If you want me to generate the EXE build automatically here, I need permission to run additional pip installs and a PyInstaller build (it can take a while).
+

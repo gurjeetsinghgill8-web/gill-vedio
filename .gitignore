@@ -1,0 +1,55 @@
+# GILL VEDIO - Git Ignore Rules
+# Never commit sensitive or generated files
+
+# Secrets & API Keys
+secrets/
+secrets/.vault
+.env
+*.key
+*.pem
+
+# Database
+data/*.db
+data/*.db-journal
+data/*.db-shm
+data/*.db-wal
+
+# Generated Videos
+output/*.mp4
+output/*.webm
+output/*.avi
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+*.egg-info/
+dist/
+build/
+.eggs/
+*.egg
+
+# Virtual Environment
+venv/
+env/
+.venv/
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# OS
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# Logs
+*.log
+
+# Temporary files
+tmp/
+temp/
+*.tmp
