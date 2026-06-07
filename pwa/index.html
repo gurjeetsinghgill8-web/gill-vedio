@@ -1,0 +1,580 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+  <meta name="theme-color" content="#7C4DFF" />
+  <meta name="description" content="GILL VEDIO — AI Video Creator. Auto-remove pauses, merge clips, generate viral ideas. Works offline on your device." />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+  <meta name="apple-mobile-web-app-title" content="GILL VEDIO" />
+  <meta property="og:title" content="GILL VEDIO — AI Video Creator" />
+  <meta property="og:description" content="Auto-remove pauses from your videos. Merge clips. Generate viral ideas with AI." />
+
+  <title>GILL VEDIO — AI Video Creator</title>
+
+  <!-- Manifest -->
+  <link rel="manifest" href="manifest.json" />
+
+  <!-- Apple Touch Icon -->
+  <link rel="apple-touch-icon" href="icons/icon-192.png" />
+
+  <!-- Stylesheet -->
+  <link rel="stylesheet" href="css/style.css" />
+</head>
+
+<body>
+  <div id="app">
+
+    <!-- ═══ HEADER ════════════════════════════════════════════ -->
+    <header class="app-header">
+      <div class="header-logo">
+        <div class="logo-icon">🎬</div>
+        <h1 id="header-title">GILL VEDIO</h1>
+      </div>
+      <div class="header-actions">
+        <button class="icon-btn" onclick="navigateTo('settings')" title="Settings">⚙️</button>
+      </div>
+    </header>
+
+    <!-- ═══ INSTALL BANNER ════════════════════════════════════ -->
+    <div id="install-banner" class="install-banner" style="margin:12px 16px 0">
+      <span style="font-size:24px">📲</span>
+      <div class="install-banner-text">
+        <h4>Install App</h4>
+        <p>Add GILL VEDIO to your home screen</p>
+      </div>
+      <span style="font-size:20px">→</span>
+    </div>
+
+    <!-- ═══ MAIN CONTENT ══════════════════════════════════════ -->
+    <main class="main-content">
+
+      <!-- ──────────────────────────────────────────────────── -->
+      <!-- SCREEN: HOME                                         -->
+      <!-- ──────────────────────────────────────────────────── -->
+      <section id="screen-home" class="screen active">
+
+        <!-- Greeting -->
+        <div style="margin-bottom:20px">
+          <h2 style="font-size:22px;font-weight:800">Ready to create? 🚀</h2>
+          <p style="font-size:14px;color:var(--text2);margin-top:4px">Your AI video factory</p>
+        </div>
+
+        <!-- Stats Grid -->
+        <div class="stats-grid">
+          <div class="stat-card">
+            <div class="stat-number" id="stat-total">0</div>
+            <div class="stat-label">Total Videos</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-number" id="stat-processed">0</div>
+            <div class="stat-label">Processed</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-number" id="stat-published">0</div>
+            <div class="stat-label">Published</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-number" id="stat-today">0</div>
+            <div class="stat-label">Today</div>
+          </div>
+        </div>
+
+        <!-- Quick Actions -->
+        <div class="card-title">⚡ Quick Actions</div>
+        <div class="action-grid">
+          <button class="action-btn" onclick="navigateTo('edit')">
+            <div class="action-icon purple">✂️</div>
+            <h3>Auto-Edit</h3>
+            <p>Remove pauses, merge clips</p>
+          </button>
+          <button class="action-btn" onclick="navigateTo('ideas')">
+            <div class="action-icon cyan">💡</div>
+            <h3>Generate Ideas</h3>
+            <p>AI viral video ideas</p>
+          </button>
+          <button class="action-btn" onclick="navigateTo('gallery')">
+            <div class="action-icon orange">📁</div>
+            <h3>My Videos</h3>
+            <p>View & share your clips</p>
+          </button>
+          <button class="action-btn" onclick="navigateTo('settings')">
+            <div class="action-icon green">🔑</div>
+            <h3>Settings</h3>
+            <p>API keys & profile</p>
+          </button>
+        </div>
+
+        <!-- How It Works -->
+        <div class="card">
+          <div class="card-title">🎯 How It Works</div>
+          <ul class="features-list">
+            <li>
+              <div class="feature-check">1️⃣</div>
+              <span>Upload your raw video(s)</span>
+            </li>
+            <li>
+              <div class="feature-check">2️⃣</div>
+              <span>AI detects & removes all pause/silence parts</span>
+            </li>
+            <li>
+              <div class="feature-check">3️⃣</div>
+              <span>Multiple clips get merged into one clean video</span>
+            </li>
+            <li>
+              <div class="feature-check">4️⃣</div>
+              <span>Download & share on social media!</span>
+            </li>
+            <li>
+              <div class="feature-check">✅</div>
+              <span style="color:var(--success);font-weight:600">100% on your device — No cloud, no internet!</span>
+            </li>
+          </ul>
+        </div>
+
+        <!-- Recent Videos -->
+        <div class="card-title" style="margin-top:8px">📹 Recent Videos</div>
+        <div id="recent-videos" style="display:flex;gap:12px;overflow-x:auto;padding-bottom:4px">
+          <!-- Populated by JS -->
+        </div>
+
+      </section>
+
+      <!-- ──────────────────────────────────────────────────── -->
+      <!-- SCREEN: EDIT (AUTO-EDIT VIDEO)                       -->
+      <!-- ──────────────────────────────────────────────────── -->
+      <section id="screen-edit" class="screen">
+
+        <h2 style="font-size:20px;font-weight:800;margin-bottom:4px">✂️ Auto-Edit Video</h2>
+        <p style="font-size:13px;color:var(--text2);margin-bottom:20px">Removes pauses & merges clips — 100% on your phone</p>
+
+        <!-- UPLOAD SECTION -->
+        <div id="upload-section">
+          <div class="upload-zone" id="upload-zone">
+            <div class="upload-icon">🎞️</div>
+            <h3>Tap to Select Videos</h3>
+            <p>Or drag & drop video files here<br><span style="color:var(--primary);font-weight:600">MP4, MOV, AVI, MKV</span> supported</p>
+          </div>
+          <input type="file" id="file-input" accept="video/*" multiple />
+
+          <!-- Video List -->
+          <div id="video-list" class="video-list"></div>
+
+          <button class="btn btn-primary" id="process-btn" onclick="startProcessing()" disabled
+            style="margin-top:8px">
+            ⚡ START AUTO-EDIT
+          </button>
+        </div>
+
+        <!-- FEATURES INFO -->
+        <div id="features-section" class="card" style="margin-top:16px">
+          <div class="card-title">⚡ What will happen</div>
+          <ul class="features-list">
+            <li><div class="feature-check">✓</div>Silent pauses will be automatically removed</li>
+            <li><div class="feature-check">✓</div>All selected videos merged into 1 clean video</li>
+            <li><div class="feature-check">✓</div>Processed on YOUR phone — no internet needed</li>
+            <li><div class="feature-check">✓</div>Original files are kept safe & unchanged</li>
+          </ul>
+        </div>
+
+        <!-- PROCESSING STATE -->
+        <div id="processing-state" class="card processing-card hidden">
+          <div class="pulse-ring"></div>
+          <div class="processing-step" id="processing-step">Preparing...</div>
+          <div class="processing-sub">Please keep the app open</div>
+          <div class="progress-wrap" style="margin-top:16px">
+            <div class="progress-bar" id="proc-progress-bar" style="width:0%"></div>
+          </div>
+          <div class="progress-text">
+            <span>Processing...</span>
+            <span id="proc-progress-pct">0%</span>
+          </div>
+        </div>
+
+        <!-- SUCCESS STATE -->
+        <div id="success-state" class="card success-card hidden">
+          <div class="success-icon">✅</div>
+          <h2 style="font-size:20px;font-weight:800;margin-bottom:4px">Done!</h2>
+          <p style="font-size:13px;color:var(--text2);margin-bottom:16px">Your video is ready</p>
+
+          <div class="success-stats">
+            <div class="success-stat">
+              <div class="val" id="stat-original">0:00</div>
+              <div class="lbl">Original</div>
+            </div>
+            <div class="success-stat">
+              <div class="val" id="stat-final">0:00</div>
+              <div class="lbl">Final</div>
+            </div>
+            <div class="success-stat">
+              <div class="val" id="stat-saved">0:00</div>
+              <div class="lbl">Saved</div>
+            </div>
+          </div>
+          <div style="text-align:center;margin-bottom:16px">
+            <span class="badge badge-success" id="stat-pauses-badge">0 pauses removed</span>
+          </div>
+
+          <!-- Preview -->
+          <div class="video-preview-wrap" id="preview-wrap">
+            <video id="result-preview" controls playsinline></video>
+          </div>
+
+          <!-- Actions -->
+          <div class="btn-group" style="margin-bottom:10px">
+            <button class="btn btn-secondary btn-sm" onclick="previewResult()">▶ Preview</button>
+            <button class="btn btn-primary btn-sm" onclick="downloadResult()">💾 Save</button>
+            <button class="btn btn-secondary btn-sm" onclick="shareResult()">📤 Share</button>
+          </div>
+
+          <!-- Optional Effects -->
+          <button class="btn btn-secondary" onclick="navigateTo('effects')" style="margin-bottom:10px">
+            ✨ Add Effects (Optional)
+          </button>
+
+          <button class="btn" onclick="resetEdit()"
+            style="background:var(--bg3);color:var(--text2);border:1px solid var(--border)">
+            ↩ Edit Another Video
+          </button>
+        </div>
+
+      </section>
+
+      <!-- ──────────────────────────────────────────────────── -->
+      <!-- SCREEN: IDEAS (AI IDEA GENERATOR)                    -->
+      <!-- ──────────────────────────────────────────────────── -->
+      <section id="screen-ideas" class="screen">
+
+        <h2 style="font-size:20px;font-weight:800;margin-bottom:4px">💡 Viral Idea Generator</h2>
+        <p style="font-size:13px;color:var(--text2);margin-bottom:20px">AI-powered viral video ideas in seconds</p>
+
+        <div class="card">
+          <div class="input-group">
+            <label class="input-label">Your Topic</label>
+            <input class="input" id="idea-topic" type="text"
+              placeholder="e.g. Morning routines, Fitness tips, Cooking hacks..." />
+          </div>
+
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px">
+            <div class="input-group">
+              <label class="input-label">Niche</label>
+              <select class="input" id="idea-niche">
+                <option>Lifestyle</option>
+                <option>Motivation</option>
+                <option>Education</option>
+                <option>Comedy</option>
+                <option>Fitness</option>
+                <option>Cooking</option>
+                <option>Tech</option>
+                <option>Business</option>
+                <option>Fashion</option>
+                <option>Travel</option>
+              </select>
+            </div>
+            <div class="input-group">
+              <label class="input-label">Language</label>
+              <select class="input" id="idea-lang">
+                <option>Hindi</option>
+                <option>English</option>
+                <option>Hinglish</option>
+                <option>Punjabi</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="input-group">
+            <label class="input-label">Platform</label>
+            <select class="input" id="idea-platform">
+              <option>Instagram Reels</option>
+              <option>YouTube Shorts</option>
+              <option>Facebook</option>
+              <option>All platforms</option>
+            </select>
+          </div>
+
+          <button class="btn btn-primary" id="generate-ideas-btn" onclick="generateVideoIdeas()">
+            🚀 Generate 10 Viral Ideas
+          </button>
+        </div>
+
+        <!-- Ideas List -->
+        <div id="ideas-list" style="margin-top:8px">
+          <div class="empty-state">
+            <div class="empty-icon">🧠</div>
+            <h3>Ready to generate!</h3>
+            <p>Enter your topic above and click<br>Generate to get 10 viral ideas</p>
+          </div>
+        </div>
+
+        <!-- Generate Videos Button -->
+        <div style="position:sticky;bottom:calc(var(--nav-height) + 16px);padding:12px 0">
+          <button class="btn btn-primary" id="gen-videos-btn" disabled
+            style="box-shadow:0 4px 24px rgba(124,77,255,0.5)">
+            🎬 Generate Videos
+          </button>
+        </div>
+
+      </section>
+
+      <!-- ──────────────────────────────────────────────────── -->
+      <!-- SCREEN: GALLERY                                      -->
+      <!-- ──────────────────────────────────────────────────── -->
+      <section id="screen-gallery" class="screen">
+
+        <h2 style="font-size:20px;font-weight:800;margin-bottom:16px">📁 My Videos</h2>
+
+        <div class="gallery-grid" id="gallery-grid">
+          <!-- Populated by JS -->
+        </div>
+
+      </section>
+
+      <!-- ──────────────────────────────────────────────────── -->
+      <!-- SCREEN: EFFECTS (Optional Effects Editor)            -->
+      <!-- ──────────────────────────────────────────────────── -->
+      <section id="screen-effects" class="screen">
+
+        <h2 style="font-size:20px;font-weight:800;margin-bottom:16px">✨ Add Effects</h2>
+
+        <!-- Mini preview -->
+        <div class="card" style="padding:0;overflow:hidden;margin-bottom:16px">
+          <video id="effects-preview" controls playsinline
+            style="width:100%;max-height:200px;object-fit:contain;background:#000;display:block">
+          </video>
+        </div>
+
+        <!-- Tab bar -->
+        <div class="tab-bar">
+          <button class="tab-btn active" data-tab="filter" onclick="switchEffectsTab('filter')">🎨 Filter</button>
+          <button class="tab-btn" data-tab="speed" onclick="switchEffectsTab('speed')">⚡ Speed</button>
+          <button class="tab-btn" data-tab="text" onclick="switchEffectsTab('text')">📝 Text</button>
+        </div>
+
+        <!-- FILTER PANEL -->
+        <div class="effects-panel card" id="effects-filter">
+          <div class="range-wrap">
+            <div class="range-label">Brightness <span id="brightness-val">0</span></div>
+            <input type="range" min="-50" max="50" value="0"
+              oninput="updateEffect('brightness', this.value)" />
+          </div>
+          <div class="range-wrap">
+            <div class="range-label">Contrast <span id="contrast-val">0</span></div>
+            <input type="range" min="-50" max="50" value="0"
+              oninput="updateEffect('contrast', this.value)" />
+          </div>
+          <div class="range-wrap">
+            <div class="range-label">Saturation <span id="saturation-val">0</span></div>
+            <input type="range" min="-50" max="50" value="0"
+              oninput="updateEffect('saturation', this.value)" />
+          </div>
+        </div>
+
+        <!-- SPEED PANEL -->
+        <div class="effects-panel card hidden" id="effects-speed">
+          <div class="card-title">Playback Speed</div>
+          <div class="speed-grid">
+            <button class="speed-btn" data-speed="0.5" onclick="setSpeed(0.5)">0.5×</button>
+            <button class="speed-btn" data-speed="0.75" onclick="setSpeed(0.75)">0.75×</button>
+            <button class="speed-btn active" data-speed="1" onclick="setSpeed(1)">1× Normal</button>
+            <button class="speed-btn" data-speed="1.25" onclick="setSpeed(1.25)">1.25×</button>
+            <button class="speed-btn" data-speed="1.5" onclick="setSpeed(1.5)">1.5×</button>
+            <button class="speed-btn" data-speed="2" onclick="setSpeed(2)">2×</button>
+          </div>
+        </div>
+
+        <!-- TEXT PANEL -->
+        <div class="effects-panel card hidden" id="effects-text">
+          <div class="input-group">
+            <label class="input-label">Text Overlay</label>
+            <input class="input" id="text-overlay-input" type="text"
+              placeholder="Enter text to show on video..."
+              oninput="updateEffect('textOverlay', this.value)" />
+          </div>
+          <p style="font-size:12px;color:var(--text2)">Text will appear at the bottom of your video</p>
+        </div>
+
+        <button class="btn btn-success" id="apply-effects-btn" onclick="applyAllEffects()"
+          style="margin-top:8px">
+          ✅ Apply All Effects
+        </button>
+
+        <div class="btn-group" style="margin-top:10px">
+          <button class="btn btn-secondary" onclick="downloadResult()">💾 Save</button>
+          <button class="btn btn-secondary" onclick="shareResult()">📤 Share</button>
+        </div>
+
+      </section>
+
+      <!-- ──────────────────────────────────────────────────── -->
+      <!-- SCREEN: SETTINGS                                     -->
+      <!-- ──────────────────────────────────────────────────── -->
+      <section id="screen-settings" class="screen">
+
+        <h2 style="font-size:20px;font-weight:800;margin-bottom:20px">⚙️ Settings</h2>
+
+        <!-- Profile -->
+        <div class="settings-section-title">👤 Profile</div>
+        <div class="card">
+          <div class="input-group">
+            <label class="input-label">Your Name</label>
+            <input class="input" id="setting-name" type="text" placeholder="Enter your name" />
+          </div>
+          <div class="input-group" style="margin-bottom:0">
+            <label class="input-label">Content Niche</label>
+            <select class="input" id="setting-niche">
+              <option>Lifestyle</option>
+              <option>Motivation</option>
+              <option>Education</option>
+              <option>Comedy</option>
+              <option>Fitness</option>
+              <option>Cooking</option>
+              <option>Tech</option>
+              <option>Business</option>
+            </select>
+          </div>
+        </div>
+
+        <!-- API Keys -->
+        <div class="settings-section-title">🔑 API Keys</div>
+        <div class="card">
+          <div class="input-group">
+            <label class="input-label">Google Gemini API Key</label>
+            <div style="display:flex;gap:8px">
+              <input class="input" id="setting-apikey" type="password"
+                placeholder="AIza..." style="flex:1" />
+              <button class="btn btn-secondary btn-sm" onclick="togglePassword('setting-apikey')"
+                style="white-space:nowrap;width:auto;padding:12px 14px">👁</button>
+            </div>
+          </div>
+          <p style="font-size:12px;color:var(--text2)">
+            Get free API key at
+            <a href="https://aistudio.google.com" target="_blank"
+              style="color:var(--primary)">aistudio.google.com</a>
+          </p>
+        </div>
+
+        <!-- Video Settings -->
+        <div class="settings-section-title">🎬 Video Processing</div>
+        <div class="card">
+          <div class="setting-item" style="margin-bottom:12px">
+            <div>
+              <div class="setting-label">Auto-remove pauses</div>
+              <div class="setting-sublabel">Detect & cut silent parts</div>
+            </div>
+            <div class="toggle on" id="toggle-pauses" onclick="this.classList.toggle('on')"></div>
+          </div>
+
+          <div class="input-group" style="margin-bottom:0">
+            <label class="input-label">Silence Threshold</label>
+            <select class="input" id="setting-threshold">
+              <option value="-20">-20 dB (Aggressive)</option>
+              <option value="-30" selected>-30 dB (Balanced)</option>
+              <option value="-40">-40 dB (Conservative)</option>
+            </select>
+          </div>
+        </div>
+
+        <!-- Storage -->
+        <div class="settings-section-title">💾 Storage</div>
+        <div class="card">
+          <div style="margin-bottom:12px">
+            <div class="setting-label" style="margin-bottom:4px">Cache Storage</div>
+            <div class="setting-sublabel">Videos are stored locally on your device</div>
+          </div>
+          <button class="btn btn-danger btn-sm" onclick="clearCache()" style="width:auto">
+            🗑 Clear Cache
+          </button>
+        </div>
+
+        <!-- Save Button -->
+        <button class="btn btn-primary" onclick="saveSettings()" style="margin-top:8px">
+          💾 Save Settings
+        </button>
+
+        <!-- About -->
+        <div class="settings-section-title" style="margin-top:8px">ℹ️ About</div>
+        <div class="card">
+          <div style="display:flex;align-items:center;gap:12px;margin-bottom:12px">
+            <div class="logo-icon" style="width:48px;height:48px;font-size:24px">🎬</div>
+            <div>
+              <div style="font-size:16px;font-weight:800">GILL VEDIO</div>
+              <div style="font-size:12px;color:var(--text2)">Version 1.0 — Progressive Web App</div>
+            </div>
+          </div>
+          <p style="font-size:12px;color:var(--text2);line-height:1.7">
+            AI-powered video editor that removes pauses, merges clips, and generates viral ideas.
+            All video processing happens <strong>100% on your device</strong> — no data leaves your phone.
+          </p>
+          <div style="display:flex;gap:8px;margin-top:12px;flex-wrap:wrap">
+            <span class="badge badge-success">✓ Offline Processing</span>
+            <span class="badge badge-primary">✓ PWA Installable</span>
+            <span class="badge badge-warning">✓ Free to Use</span>
+          </div>
+        </div>
+
+      </section>
+
+    </main><!-- /main-content -->
+
+    <!-- ═══ BOTTOM NAV ════════════════════════════════════════ -->
+    <nav class="bottom-nav">
+      <button class="nav-item active" data-screen="home">
+        <span class="nav-icon">🏠</span>
+        <span class="nav-label">HOME</span>
+      </button>
+      <button class="nav-item" data-screen="edit">
+        <span class="nav-icon">✂️</span>
+        <span class="nav-label">EDIT</span>
+      </button>
+      <button class="nav-item" data-screen="ideas">
+        <span class="nav-icon">💡</span>
+        <span class="nav-label">IDEAS</span>
+      </button>
+      <button class="nav-item" data-screen="gallery">
+        <span class="nav-icon">📁</span>
+        <span class="nav-label">GALLERY</span>
+      </button>
+      <button class="nav-item" data-screen="settings">
+        <span class="nav-icon">⚙️</span>
+        <span class="nav-label">SETTINGS</span>
+      </button>
+    </nav>
+
+    <!-- ═══ TOAST ════════════════════════════════════════════ -->
+    <div id="toast"></div>
+
+    <!-- ═══ VIDEO MODAL ══════════════════════════════════════ -->
+    <div id="modal-overlay" class="modal-overlay" onclick="if(event.target===this)closeModal()">
+      <div class="modal">
+        <div class="modal-handle"></div>
+        <div class="modal-title" id="modal-title">Video</div>
+
+        <div style="border-radius:12px;overflow:hidden;background:#000;margin-bottom:16px">
+          <video id="modal-video" controls playsinline
+            style="width:100%;max-height:280px;object-fit:contain;background:#000;display:block">
+          </video>
+        </div>
+
+        <input type="hidden" id="modal-video-id" />
+
+        <div class="success-stats" id="modal-stats" style="margin-bottom:16px"></div>
+
+        <div class="btn-group" style="margin-bottom:10px">
+          <button class="btn btn-primary" onclick="shareCurrentVideo()">📤 Share</button>
+          <button class="btn btn-danger" onclick="deleteCurrentVideo()">🗑 Delete</button>
+        </div>
+        <button class="btn" onclick="closeModal()"
+          style="background:var(--bg3);color:var(--text2);border:1px solid var(--border)">
+          ✕ Close
+        </button>
+      </div>
+    </div>
+
+  </div><!-- /#app -->
+
+  <!-- ═══ SCRIPTS ══════════════════════════════════════════════ -->
+  <script type="module" src="js/app.js"></script>
+
+</body>
+</html>
