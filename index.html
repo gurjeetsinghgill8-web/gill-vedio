@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta http-equiv="refresh" content="0; url=./pwa/index.html" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>GILL VEDIO — Redirecting...</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      background: #0A0A0F;
+      color: #F0F0FF;
+      font-family: 'Segoe UI', sans-serif;
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+    }
+    .logo { font-size: 48px; margin-bottom: 16px; }
+    h1 { font-size: 24px; font-weight: 800; background: linear-gradient(135deg, #7C4DFF, #00E5FF); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+    p { color: #A0A0C0; margin-top: 8px; font-size: 14px; }
+    .spinner {
+      width: 40px; height: 40px; border: 3px solid transparent;
+      border-top-color: #7C4DFF; border-radius: 50%;
+      animation: spin 0.8s linear infinite; margin: 20px auto 0;
+    }
+    @keyframes spin { to { transform: rotate(360deg); } }
+  </style>
+</head>
+<body>
+  <div>
+    <div class="logo">🎬</div>
+    <h1>GILL VEDIO</h1>
+    <p>AI Video Creator — Loading...</p>
+    <div class="spinner"></div>
+  </div>
+  <script>
+    // Redirect to PWA
+    window.location.replace('./pwa/index.html');
+  </script>
+</body>
+</html>
