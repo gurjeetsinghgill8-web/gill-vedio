@@ -88,25 +88,12 @@ if os.path.exists(models_dir):
             ok = scp_upload(os.path.join(models_dir, f), f"{REMOTE}/models/{f}")
             print(f"  {'OK' if ok else 'FAILED'}: models/{f}")
 
-# Upload secrets (vault keys)
-print("Uploading encrypted vault/secrets...")
-secrets_dir = os.path.join(GILL_DIR, "secrets")
-if os.path.exists(secrets_dir):
-    for f in os.listdir(secrets_dir):
-        if f.startswith("."):
-            ok = scp_upload(os.path.join(secrets_dir, f), f"{REMOTE}/secrets/{f}")
-            print(f"  {'OK' if ok else 'FAILED'}: secrets/{f}")
-
-# Upload database if exists
-print("Uploading SQLite database...")
-db_dir = os.path.join(GILL_DIR, "data")
-if os.path.exists(db_dir):
-    for f in os.listdir(db_dir):
-        if f.endswith(".db"):
-            ok = scp_upload(os.path.join(db_dir, f), f"{REMOTE}/data/{f}")
-            print(f"  {'OK' if ok else 'FAILED'}: data/{f}")
-
+# NOTE: secrets/.vault and data/*.db are NEVER uploaded from laptop.
+# Keys are saved directly on VPS by the user via the Settings page.
+# This prevents overwriting user's saved API keys on every deploy.
+print("      Skipping vault/secrets and database (kept safe on VPS)")
 print("      Upload done!")
+
 
 # ─── Step 3: Install dependencies ────────────────────────────
 print("[3/5] Installing Python packages on VPS...")
